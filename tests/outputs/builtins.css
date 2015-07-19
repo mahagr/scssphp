@@ -133,3 +133,8 @@
   a: true;
   b: true;
   c: false; }
+
+div {
+  a: #0a64ff;
+  b: #0058ef;
+  c: b; }

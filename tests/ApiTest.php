@@ -27,7 +27,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
 
     public function testUserFunction()
     {
-        $this->scss->registerFunction('add-two', function ($args) {
+        $this->scss->registerFunction('add-two', function ($compiler, $args) {
             list($a, $b) = $args;
             return $a[1] + $b[1];
         });
@@ -48,7 +48,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
 
     public function testImportCustomCallback()
     {
-        $this->scss->addImportPath(function ($path) {
+        $this->scss->addImportPath(function ($compiler, $path) {
             return __DIR__ . '/inputs/' . str_replace('.css', '.scss', $path);
         });
 
