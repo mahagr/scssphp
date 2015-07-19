@@ -164,3 +164,9 @@ div {
 /* line 168, inputs/operators.scss */
 .alt .j {
   margin: 0 -2em; }
+/* line 177, inputs/operators.scss */
+div {
+  *margin-left: 2.07447%; }
+/* line 183, inputs/operators.scss */
+.foo {
+  width: 12.5%; }

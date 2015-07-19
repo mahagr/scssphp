@@ -55,14 +55,14 @@ class ExceptionTest extends \PHPUnit_Framework_TestCase
   foo : bar;
 END_OF_SCSS
                 ,
-                'unclosed block'
+                'Unclosed block'
             ),
             array(<<<'END_OF_SCSS'
 .test {
 }}
 END_OF_SCSS
                 ,
-                'unexpected }'
+                'Unexpected }'
             ),
             array(<<<'END_OF_SCSS'
 .test { color: #fff / 0; }
@@ -93,7 +93,7 @@ END_OF_SCSS
 }
 END_OF_SCSS
                 ,
-                'Mixin or function doesn\'t have an argument named $a.'
+                'Mixin or function doesn\'t have an argument named $a'
             ),
             array(<<<'END_OF_SCSS'
 div {
@@ -101,7 +101,7 @@ div {
 }
 END_OF_SCSS
                 ,
-                'expecting color'
+                'Expecting color'
             ),
         );
     }

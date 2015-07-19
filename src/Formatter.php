@@ -53,12 +53,18 @@ abstract class Formatter
      */
     public $assignSeparator;
 
+    /**
+     * Initialize formatter
+     *
+     * @api
+     */
     abstract public function __construct();
 
     /**
      * Return indentation (whitespace)
      *
      * @param integer $n
+     *
      * @return string
      */
     protected function indentStr($n = 0)
@@ -69,8 +75,11 @@ abstract class Formatter
     /**
      * Return property assignment
      *
+     * @api
+     *
      * @param string $name
      * @param mixed  $value
+     *
      * @return string
      */
     public function property($name, $value)
@@ -81,6 +90,8 @@ abstract class Formatter
     /**
      * Strip semi-colon appended by property(); it's a separator, not a terminator
      *
+     * @api
+     *
      * @param array $lines
      */
     public function stripSemicolon(&$lines)
@@ -90,8 +101,8 @@ abstract class Formatter
     /**
      * Output lines inside a block
      *
-     * @param string    $inner
-     * @param \stdClass $block
+     * @param string               $inner
+     * @param \Leafo\ScssPhp\Block $block
      */
     protected function blockLines($inner, $block)
     {
@@ -106,7 +117,7 @@ abstract class Formatter
     /**
      * Output non-empty block
      *
-     * @param \stdClass $block
+     * @param \Leafo\ScssPhp\Block $block
      */
     protected function block($block)
     {
@@ -148,7 +159,10 @@ abstract class Formatter
     /**
      * Entry point to formatting a block
      *
-     * @param \stdClass $block An abstract syntax tree
+     * @api
+     *
+     * @param \Leafo\ScssPhp\Block $block An abstract syntax tree
+     *
      * @return string
      */
     public function format($block)

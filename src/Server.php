@@ -250,6 +250,8 @@ class Server
      * Render errors as a pseudo-element within valid CSS, displaying the errors on any
      * page that includes this CSS.
      *
+     * @api
+     *
      * @param boolean $show
      */
     public function showErrorsAsCSS($show = true)
@@ -262,6 +264,8 @@ class Server
      *
      * @param string $in  Input file (.scss)
      * @param string $out Output file (.css) optional
+     *
+     * @deprecated
      *
      * @return string|bool
      */
@@ -290,6 +294,8 @@ class Server
      * @param string $in  Input file (.scss)
      * @param string $out Output file (.css)
      *
+     * @deprecated
+     *
      * @return bool
      */
     public function checkedCompile($in, $out)
@@ -305,6 +311,8 @@ class Server
 
     /**
      * Compile requested scss and serve css.  Outputs HTTP response.
+     *
+     * @api
      *
      * @param string $salt Prefix a string to the filename for creating the cache name hash
      */
@@ -384,6 +392,8 @@ class Server
     /**
      * Based on explicit input/output files does a full change check on cache before compiling.
      *
+     * @deprecated
+     *
      * @param string  $in
      * @param string  $out
      * @param boolean $force
@@ -414,6 +424,8 @@ class Server
     /**
      * Constructor
      *
+     * @api
+     *
      * @param string                       $dir      Root directory to .scss files
      * @param string                       $cacheDir Cache directory
      * @param \Leafo\ScssPhp\Compiler|null $scss     SCSS compiler instance
@@ -443,6 +455,8 @@ class Server
 
     /**
      * Helper method to serve compiled scss
+     *
+     * @api
      *
      * @param string $path Root path
      */
