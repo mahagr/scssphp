@@ -14,6 +14,7 @@ namespace Leafo\ScssPhp;
 use Leafo\ScssPhp\Base\Range;
 use Leafo\ScssPhp\Colors;
 use Leafo\ScssPhp\Parser;
+use Leafo\ScssPhp\SourceMap;
 use Leafo\ScssPhp\Util;
 
 /**
@@ -103,6 +104,7 @@ class Compiler
 
     protected $numberPrecision = 5;
     protected $lineNumberStyle = null;
+    protected $sourceMap = SourceMap::NONE;
 
     protected $formatter = 'Leafo\ScssPhp\Formatter\Nested';
 
@@ -2019,6 +2021,11 @@ class Compiler
     public function setLineNumberStyle($lineNumberStyle)
     {
         $this->lineNumberStyle = $lineNumberStyle;
+    }
+
+    public function setSourceMap($sourceMap)
+    {
+        $this->sourceMap = $sourceMap;
     }
 
     public function registerFunction($name, $func)

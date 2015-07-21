@@ -20,14 +20,18 @@ include __DIR__ . '/../scss.inc.php';
 
 use Leafo\ScssPhp\Compiler;
 use Leafo\ScssPhp\Parser;
+use Leafo\ScssPhp\SourceMap;
 use Leafo\ScssPhp\Version;
 
-$style = null;
-$loadPaths = null;
 $precision = null;
+$style = null;
 $dumpTree = false;
-$inputFile = null;
+$loadPaths = null;
 $changeDir = false;
+$inputFile = null;
+$outputFile = null;
+$sourceMapFile = null;
+$sourceMap = SourceMap::NONE;
 $debugInfo = false;
 $lineNumbers = false;
 
@@ -63,18 +67,20 @@ for ($i = 1; $i < $argc; $i++) {
         $exe = $argv[0];
 
         $HELP = <<<EOT
-Usage: $exe [options] [input-file]
+Usage: $exe [options] [input-file [output-file.css [sourcemap-file.map]]]
 
 Options include:
 
-    --debug-info   Annotate selectors with CSS referring to the source file and line number
-    -h, --help     Show this message
-    -f=format      Set the output format (compact, compressed, crunched, expanded, or nested)
-    -i=path        Set import path
-    --line-numbers Annotate selectors with comments referring to the source file and line number
-    -p=precision   Set decimal number precision (default 5)
-    -T             Dump formatted parse tree
-    -v, --version  Print the version
+    --debug-info        Annotate selectors with CSS referring to the source file and line number
+    -h, --help          Show this message
+    -f=format           Set the output format (compact, compressed, crunched, expanded, or nested)
+    -i=path             Set import path
+    --line-numbers      Annotate selectors with comments referring to the source file and line number
+    -p=precision        Set decimal number precision (default 5)
+    --sourcemap         Generate sourcemap (default: auto)
+    --sourcemap=option  Set the sourcmap option (auto, file, inline, or none)
+    -T                  Dump formatted parse tree
+    -v, --version       Print the version
 
 EOT;
         exit($HELP);
@@ -99,6 +105,18 @@ EOT;
         continue;
     }
 
+    if ($argv[$i] === '--sourcemap') {
+        $sourceMap = SourceMap::AUTO;
+        continue;
+    }
+
+    $value = parseArgument($i, array('--sourcemap'));
+
+    if (isset($value)) {
+        $sourceMap = $value;
+        continue;
+    }
+
     $value = parseArgument($i, array('-f', '--style'));
 
     if (isset($value)) {
@@ -120,12 +138,35 @@ EOT;
         continue;
     }
 
-    if (file_exists($argv[$i])) {
+    if ($inputFile === null) {
         $inputFile = $argv[$i];
         continue;
     }
+
+    if ($outputFile === null) {
+        $outputFile = $argv[$i];
+        continue;
+    }
+
+    if ($sourceMapFile === null) {
+        $sourceMapFile = $argv[$i];
+        continue;
+    }
+
+    exit("{$argv[0]}: Unrecognized parameter: {$argv[$i]}\n");
 }
 
+if (! in_array($sourceMap, array(SourceMap::NONE, SourceMap::AUTO, SourceMap::FILE, SourceMap::INLINE))) {
+    exit("{$argv[0]}: Unrecognized sourcemap option: $sourceMap\n");
+}
+
+if ($inputFile) {
+    if ($inputFile === '-') {
+        $inputFile = null;
+    } elseif (! file_exists($inputFile)) {
+        exit("{$argv[0]}: Input file: $inputFile doesn't exist\n");
+    }
+}
 
 if ($inputFile) {
     $data = file_get_contents($inputFile);
@@ -154,6 +195,7 @@ if ($dumpTree) {
 }
 
 $scss = new Compiler();
+$scss->setSourceMap($sourceMap);
 
 if ($debugInfo && $inputFile) {
     $scss->setLineNumberStyle(Compiler::DEBUG_INFO);
