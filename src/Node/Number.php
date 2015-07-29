@@ -145,15 +145,16 @@ return array($this->dimension, $units);
 
     private function sansCommonUnits($units1, $units2)
     {
+        $units = array_diff_key($units1, $units2);
         $commonUnits = array_intersect_key($units1, $units2);
 
         // look at unit size and cancel units
-        foreach ($commonUnits as $unit) {
-            $unitSize1 = $units1[$unit];
+        foreach ($commonUnits as $unit => $unitSize1) {
             $unitSize2 = $units2[$unit];
-
+            $units[$unit] = $unitSize1 - $unitSize2;
         }
 
+var_dump($units);
         return $units;
     }
 
@@ -164,15 +165,24 @@ return array($this->dimension, $units);
      */
     public function normalize()
     {
-        //$units = $this->sansCommonUnits($this->units);
+        $units = array();
 
-        if (0 && isset(self::$unitTable['in'][$this->units])) {
-            $conv = self::$unitTable['in'][$this->units];
+        foreach ($this->units as $unit => $exp) {
+            if (isset(self::$unitTable['in'][$unit])) {
+                if ($exp < 0) {
+                    $conv = 1 / pow(self::$unitTable['in'][$unit], -$exp);
+                } else {
+                    $conv = pow(self::$unitTable['in'][$unit], $exp);
+                }
 
-            return new Number($this->dimension / $conv, 'in');
+                $unit = 'in';
+                $this->dimension /= $conv;
+            }
+
+            @$units[$unit] += $exp;
         }
 
-        return new Number($this->dimension, $this->units);
+        return new Number($this->dimension, $units);
     }
 
     /**
