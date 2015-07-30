@@ -1625,22 +1625,23 @@ class Compiler
         return $this->toBool($left[1] < $right[1]);
     }
 
-    /**
-     * Three-way comparison, aka spaceship operator
-     *
-     * @param array $left
-     * @param array $right
-     *
-     * @return array
-     */
-    protected function opCmpNumberNumber($left, $right)
-    {
-        $n = $left[1] - $right[1];
-
-        return new Number($n ? $n / abs($n) : 0, '');
-
-        // PHP7: return new Number($left[1] <=> $right[1], '');
-    }
+// This is from the patch/op-cmp branch
+//    /**
+//     * Three-way comparison, aka spaceship operator
+//     *
+//     * @param array $left
+//     * @param array $right
+//     *
+//     * @return array
+//     */
+//    protected function opCmpNumberNumber($left, $right)
+//    {
+//        $n = $left[1] - $right[1];
+//
+//        return new Number($n ? $n / abs($n) : 0, '');
+//
+//        // PHP7: return new Number($left[1] <=> $right[1], '');
+//    }
 
     public function toBool($thing)
     {
