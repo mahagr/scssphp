@@ -154,7 +154,7 @@ return array($this->dimension, $units);
             $units[$unit] = $unitSize1 - $unitSize2;
         }
 
-var_dump($units);
+//var_dump($units);
         return $units;
     }
 
