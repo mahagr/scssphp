@@ -851,6 +851,27 @@ class Compiler
                 }
                 break;
 
+            case Block::T_NESTED_PROPERTY:
+                list(, $prop) = $child;
+
+                $prefixed = array();
+                $prefix = $this->compileValue($prop->prefix) . '-';
+
+                foreach ($prop->children as $child) {
+                    if ($child[0] == 'assign') {
+                        array_unshift($child[1][2], $prefix);
+                    }
+
+                    if ($child[0] == 'nestedprop') {
+                        array_unshift($child[1]->prefix[2], $prefix);
+                    }
+
+                    $prefixed[] = $child;
+                }
+
+                $this->compileChildren($prefixed, $out);
+                break;
+
             case Block::T_IF:
                 list(, $if) = $child;
 
@@ -887,7 +908,13 @@ class Compiler
                     $this->popEnv();
 
                     if ($ret) {
-                        return $ret;
+                        if ($ret[0] != 'control') {
+                            return $ret;
+                        }
+
+                        if ($ret[1]) {
+                            break;
+                        }
                     }
                 }
                 break;
@@ -899,7 +926,13 @@ class Compiler
                     $ret = $this->compileChildren($while->children, $out);
 
                     if ($ret) {
-                        return $ret;
+                        if ($ret[0] != 'control') {
+                            return $ret;
+                        }
+
+                        if ($ret[1]) {
+                            break;
+                        }
                     }
                 }
                 break;
@@ -926,32 +959,26 @@ class Compiler
                     $ret = $this->compileChildren($for->children, $out);
 
                     if ($ret) {
-                        return $ret;
+                        if ($ret[0] != 'control') {
+                            return $ret;
+                        }
+
+                        if ($ret[1]) {
+                            break;
+                        }
                     }
                 }
 
                 break;
 
-            case Block::T_NESTED_PROPERTY:
-                list(, $prop) = $child;
+            case Node::T_BREAK:
+                return array(Node::T_CONTROL, true);
 
-                $prefixed = array();
-                $prefix = $this->compileValue($prop->prefix) . '-';
+            case Node::T_CONTINUE:
+                return array(Node::T_CONTROL, false);
 
-                foreach ($prop->children as $child) {
-                    if ($child[0] == 'assign') {
-                        array_unshift($child[1][2], $prefix);
-                    }
-
-                    if ($child[0] == 'nestedprop') {
-                        array_unshift($child[1]->prefix[2], $prefix);
-                    }
-
-                    $prefixed[] = $child;
-                }
-
-                $this->compileChildren($prefixed, $out);
-                break;
+            case Node::T_RETURN:
+                return $this->reduce($child[1], true);
 
             case Node::T_CHARSET:
                 if (! $this->charsetSeen) {
@@ -1036,9 +1063,6 @@ class Compiler
                     $out->lines[] = '@import ' . $this->compileValue($rawPath) . ';';
                 }
                 break;
-
-            case Node::T_RETURN:
-                return $this->reduce($child[1], true);
 
             case Node::T_INCLUDE:
                 // including a mixin
@@ -1127,6 +1151,9 @@ class Compiler
                 $value = $this->compileValue($this->reduce($value, true));
                 $this->throwError("Line $line ERROR: $value\n");
                 break;
+
+            case Node::T_CONTROL:
+                $this->throwError('@break/@continue not permitted in this scope');
 
             default:
                 $this->throwError('Unknown child type: %s', $child[0]);

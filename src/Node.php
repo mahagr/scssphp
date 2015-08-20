@@ -58,6 +58,9 @@ abstract class Node
     const T_SELF = 'self';
     const T_BLOCK = 'block';
     const T_HSL = 'hsl';
+    const T_CONTROL = 'control';
+    const T_BREAK = 'break';
+    const T_CONTINUE = 'continue';
 
     /**
      * @var string
