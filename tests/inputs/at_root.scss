@@ -4,7 +4,7 @@
 body{
 .second {
   color: white;
-  
+
   @at-root {
     .nested1 {
       color: blue;
@@ -14,7 +14,7 @@ body{
         }
       }
       color: orange;
-    }  
+    }
   }
   color: black;
 }
